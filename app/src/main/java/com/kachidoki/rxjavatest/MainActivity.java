@@ -1,8 +1,11 @@
 package com.kachidoki.rxjavatest;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import rx.Observable;
 import rx.Observer;
@@ -15,65 +18,28 @@ import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
+    private Button btn1;
+    private Button btn2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        btn1 = (Button) findViewById(R.id.rxjavaSim);
+        btn2 = (Button) findViewById(R.id.rxjavaRetroit);
 
-//        Observable<String> observable = Observable.create(new Observable.OnSubscribe<String>() {
-//            @Override
-//            public void call(Subscriber<? super String> subscriber) {
-//                subscriber.onNext("Hello!");
-//                subscriber.onNext("I");
-//                subscriber.onNext("Am");
-//                subscriber.onNext("KachidokiMa");
-//                subscriber.onCompleted();
-//            }
-//        });
-//
-//        Observer<String> observer = new Observer<String>() {
-//            @Override
-//            public void onCompleted() {
-//                Log.e("Rxjava","Completed");
-//            }
-//
-//            @Override
-//            public void onError(Throwable e) {
-//                Log.e("Rxjava","Error");
-//            }
-//
-//            @Override
-//            public void onNext(String s) {
-//                Log.e("Rxjava"," "+s);
-//            }
-//        };
-//
-//        observable.subscribe(observer);
+        btn1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this,Elementary.class));
+            }
+        });
 
-
-        Observable.just("Hello!","I","Am","KachidokiMa")
-                .doOnNext(new Action1<String>() {
-                    @Override
-                    public void call(String s) {
-                        Log.e("Rxjava","doOnNext "+s+",run in "+Thread.currentThread().getName());
-
-                    }
-                })
-                .subscribeOn(Schedulers.newThread())
-                .map(new Func1<String, String>() {
-                    @Override
-                    public String call(String s) {
-                        Log.e("Rxjava","Map run in "+Thread.currentThread().getName());
-                        return "~"+s+"~";
-                    }
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String s) {
-                        Log.e("Rxjava","get Result "+s+",run in "+Thread.currentThread().getName());
-                    }
-                });
+        btn2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this,RetrofitTest.class));
+            }
+        });
 
 
     }
