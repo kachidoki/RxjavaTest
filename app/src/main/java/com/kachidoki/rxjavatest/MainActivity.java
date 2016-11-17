@@ -7,6 +7,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import rx.Observable;
 import rx.Observer;
 import rx.Scheduler;
@@ -18,29 +21,25 @@ import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btn1;
-    private Button btn2;
+    @BindView(R.id.rxjavaSim) Button btn1;
+    @BindView(R.id.rxjavaRetroit) Button btn2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        btn1 = (Button) findViewById(R.id.rxjavaSim);
-        btn2 = (Button) findViewById(R.id.rxjavaRetroit);
+        ButterKnife.bind(this);
 
-        btn1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this,Elementary.class));
-            }
-        });
+    }
 
-        btn2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this,RetrofitTest.class));
-            }
-        });
+    @OnClick(R.id.rxjavaSim)
+    public void toRxSimple(){
+        startActivity(new Intent(MainActivity.this,Elementary.class));
+    }
 
+    @OnClick(R.id.rxjavaRetroit)
+    public void toRxRetrofit(){
+        startActivity(new Intent(MainActivity.this,RetrofitTest.class));
 
     }
 }
