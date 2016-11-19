@@ -18,6 +18,7 @@ import butterknife.OnClick;
 import rx.Observer;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -44,7 +45,7 @@ public class RetrofitTest extends AppCompatActivity {
             Log.e("Test", "songerName: " + apiResult.showapi_res_body.pagebean.songLists.get(1).singername);
             Log.e("Test", "img: " + apiResult.showapi_res_body.pagebean.songLists.get(1).albumpic_small);
             Glide.with(RetrofitTest.this)
-                    .load(apiResult.showapi_res_body.pagebean.songLists.get(1).albumpic_small)
+                    .load("http://ww3.sinaimg.cn/large/610dc034jw1f9tmhxq87lj20u011htae.jpg")
                     .into(image);
         }
     };

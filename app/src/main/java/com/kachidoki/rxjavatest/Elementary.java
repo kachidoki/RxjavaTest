@@ -61,10 +61,16 @@ public class Elementary extends AppCompatActivity{
                 }
             })
                     .subscribeOn(Schedulers.newThread())
+                    .flatMap(new Func1<String, Observable<String>>() {
+                        @Override
+                        public Observable<String> call(String s) {
+                            Log.e("Rxjava","FlatMap "+s+" run in "+Thread.currentThread().getName());
+                            return Observable.just("~"+s+"~","1","2","3");
+                        }
+                    })
                     .map(new Func1<String, String>() {
                 @Override
                 public String call(String s) {
-                    Log.e("Rxjava","Map run in "+Thread.currentThread().getName());
                     return "~"+s+"~";
                 }
             })
