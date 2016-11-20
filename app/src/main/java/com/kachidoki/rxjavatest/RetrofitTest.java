@@ -3,6 +3,8 @@ package com.kachidoki.rxjavatest;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -10,7 +12,10 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.kachidoki.rxjavatest.bean.ApiResult;
+import com.kachidoki.rxjavatest.bean.SongList;
 import com.kachidoki.rxjavatest.network.NetWork;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -19,6 +24,7 @@ import rx.Observer;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -26,9 +32,12 @@ import rx.schedulers.Schedulers;
  */
 public class RetrofitTest extends AppCompatActivity {
     protected Subscription subscription;
-    @BindView(R.id.doSomething) Button doSomething;
-    @BindView(R.id.image) ImageView image;
-    final Observer<ApiResult> observer = new Observer<ApiResult>() {
+    @BindView(R.id.RestdoSomething) Button doSomething;
+    @BindView(R.id.gridRv) RecyclerView recyclerView;
+
+    MusicAdapther musicAdapther = new MusicAdapther(RetrofitTest.this);
+
+    Observer<List<SongList>> observer = new Observer<List<SongList>>() {
         @Override
         public void onCompleted() {
 
@@ -40,22 +49,22 @@ public class RetrofitTest extends AppCompatActivity {
         }
 
         @Override
-        public void onNext(ApiResult apiResult) {
-            Log.e("Test", "songName: " + apiResult.showapi_res_body.pagebean.songLists.get(1).songname);
-            Log.e("Test", "songerName: " + apiResult.showapi_res_body.pagebean.songLists.get(1).singername);
-            Log.e("Test", "img: " + apiResult.showapi_res_body.pagebean.songLists.get(1).albumpic_small);
-            Glide.with(RetrofitTest.this)
-                    .load("http://ww3.sinaimg.cn/large/610dc034jw1f9tmhxq87lj20u011htae.jpg")
-                    .into(image);
+        public void onNext(List<SongList> songLists) {
+            musicAdapther.setData(songLists);
         }
     };
 
-
-    @OnClick(R.id.doSomething)
+    @OnClick(R.id.RestdoSomething)
     void doSomething() {
         unsubscribe();
         subscription = NetWork.getMusicApi()
                 .getMusicList("27351", "afd32ae229f54eb88446af5f0bb5d52e", "5")
+                .map(new Func1<ApiResult, List<SongList>>() {
+                    @Override
+                    public List<SongList> call(ApiResult apiResult) {
+                        return apiResult.showapi_res_body.pagebean.songLists;
+                    }
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
@@ -64,10 +73,11 @@ public class RetrofitTest extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test);
+        setContentView(R.layout.activity_musiclist);
         ButterKnife.bind(this);
 
-
+        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL));
+        recyclerView.setAdapter(musicAdapther);
     }
 
     @Override
